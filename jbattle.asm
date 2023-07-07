@@ -19,8 +19,9 @@ section .data
 
 ;;; ------------------------------------
 section .bss
-	chlen	equ	2
-	choice	resb	chlen
+	
+	buffer	resb	1
+	choice	resb	2
 
 ;;; ------------------------------------
 section .text
@@ -57,7 +58,7 @@ player_round:
 	mov 	rbp, rsp
 	call	wrstats
 	wrout	actmess, actlen
-	readin	choice, chlen	
+	call	readinput
 	cmp	byte choice[0], 'q'	 
 	jne	contround
 	quit
@@ -255,6 +256,33 @@ endwrite:
 	cmp	rbx, 2
 	jle	statloop
 	wrout	justnl, 2
+	pop	rbx
+	pop	rbp
+	ret
+
+global	readinput
+readinput:	
+	push 	rbp
+	mov 	rbp, rsp
+	push 	rbx
+	mov	rbx, choice
+	xor	r10, r10
+readmore:	
+	mov    	rax, SYS_READ
+	mov    	rdi, STDIN
+	mov    	rsi, buffer
+	mov    	rdx, 1
+	syscall	
+	mov	al, [buffer]
+	cmp	al, 10
+	je	endread
+	inc	r10
+	cmp	r10, 1
+	jg	readmore
+	mov	[rbx], al
+	inc	rbx
+	jmp 	readmore
+endread:	
 	pop	rbx
 	pop	rbp
 	ret

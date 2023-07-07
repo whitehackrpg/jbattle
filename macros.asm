@@ -7,15 +7,6 @@
 	syscall	
 %endmacro
 
-;;; read something in
-%macro 	readin	2
-	mov    	rax, SYS_READ
-	mov    	rdi, STDIN
-	mov    	rsi, %1
-	mov    	rdx, %2
-	syscall	
-%endmacro
-
 ;;; randomize a number between 1 and %2, store in %1
 %macro	rng	2
 	rdtsc
